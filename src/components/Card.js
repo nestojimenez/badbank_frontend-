@@ -10,7 +10,7 @@ const Card = ({ header, title, text, body, status, bgcolor, txtcolor }) => {
   return (
     <div>
       <div className="card text-white bg-primary mb-3" style={{maxWidth: '18rem'}}>
-        <div className="card-header text-dark">{header}</div>
+        <div className="card-header text-white">{header}</div>
         <div className="card-body">
           {title && <h5 className="card-title"></h5>}
           {text && <p className="card-text">{text}</p>}

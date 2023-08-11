@@ -44,52 +44,39 @@ const Balance = () => {
 
   console.log(data);
   return (
-    <div>
+    <div className="m-5 p-5">
       {mongoUser && <h1>Account name: {mongoUser.name}</h1>}
       {mongoUser && <h2>Email: {mongoUser.email}</h2>}
       {mongoUser && <h3>Current Balance: {mongoUser.balance}</h3>}
+
       
-      <div className="m-3">
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-3">
-                    <p>Name</p>
-                  </div>
-                  <div className="col-3">
-                    <p>Email</p>
-                  </div>
-                  <div className="col-3">
-                    <p>Amount</p>
-                  </div>
-                  <div className="col-3">
-                    <p>Transaction Type</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-      {data &&
-        data.map((item) => {
-          return (
-            <div>
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-3">
-                    <p>{item.name}</p>
-                  </div>
-                  <div className="col-3">
-                    <p>{item.email}</p>
-                  </div>
-                  <div className="col-3">
-                    <p>{item.amount}</p>
-                  </div>
-                  <div className="col-3">
-                    <p>{item.type}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+
+      <table className="table table-striped m-5 p-5">
+        <thead>
+          <tr>
+          <th scope="col">id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Transaction Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data && data.map((item, index)=>{
+            return(
+              
+                <tr key={index}>
+                  <th scope="row">{index+1}</th>
+                  <td>{item.name}</td>
+                  <td>{item.email}</td>
+                  <td>{item.amount}</td>
+                  <td>{item.type}</td>
+                </tr>
+              
+            )
+          })}
+       </tbody>
+      </table>
     </div>
   );
 };

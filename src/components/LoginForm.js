@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import { signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import auth from "../firebase/useAuth";
 
-const LoginForm = ({setShow}) => {
+const LoginForm = ({ setShow }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,18 +16,18 @@ const LoginForm = ({setShow}) => {
     loginFirebase(email, password);
   };
 
-  const loginFirebase = (email, password)=>{
+  const loginFirebase = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
-  }
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+  };
 
   const signInGoogle = () => {
     const provider = new GoogleAuthProvider();
@@ -49,6 +53,14 @@ const LoginForm = ({setShow}) => {
       });
   };
 
+  function validateEmail(email) {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  const [submit, setSubmit] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -60,9 +72,10 @@ const LoginForm = ({setShow}) => {
     },
     validate: (values) => {
       let errors = {};
-
-      if (!values.email) errors.email = "Your email is require";
+      if (!validateEmail(values.email))
+        errors.email = "Not valida email format";
       if (!values.password) errors.password = "You must enter a valid password";
+      (Object.keys(errors).length===0) ? setSubmit(true) : setSubmit(false);
       return errors;
     },
   });
@@ -71,14 +84,19 @@ const LoginForm = ({setShow}) => {
     <div>
       <form onSubmit={formik.handleSubmit}>
         Email adress
-        <input
-          type="text"
-          name="email"
-          className="form-control m-1"
-          placeholder="Enter email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-        />
+        <div className="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">
+            @
+          </span>
+          <input
+            type="text"
+            name="email"
+            className={`form-control m-1 aria-label=${"Username"} aria-describedby='${"basic-addon1"}`}
+            placeholder="Enter email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+          />
+        </div>
         {formik.errors.email ? (
           <div style={{ color: "red" }}>{formik.errors.email}</div>
         ) : null}
@@ -94,11 +112,11 @@ const LoginForm = ({setShow}) => {
         {formik.errors.password ? (
           <div style={{ color: "red" }}>{formik.errors.password}</div>
         ) : null}
-        <button type="submit" className="btn btn-light m-2">
+        {submit && <button type="submit" className="btn btn-light m-2">
           Log In
-        </button>
+        </button>}
         <div>Or</div>
-        <button onClick={signInGoogle}>Sing in With Google</button>
+        <button onClick={signInGoogle} className="btn btn-outline-success">Sing in With Google<span class="badge bg-secondary">New</span></button>
       </form>
     </div>
   );

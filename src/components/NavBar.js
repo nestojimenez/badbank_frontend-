@@ -48,7 +48,7 @@ const NavBar = () => {
                 aria-current="page"
                 href="#/CreateAccount"
               >
-                Create Account
+                Create Account 
               </a>
             </li>
             <li className="nav-item">
@@ -71,14 +71,14 @@ const NavBar = () => {
                 Balance
               </a>
             </li>}
-            <li className="nav-item">
+            {show && <li className="nav-item">
               <a className="nav-link" href="#/AllData">
                 AllData
               </a>
-            </li>
+            </li>}
             {show && <li className="nav-item">
               <a className="nav-link" href="#/Transfer">
-                Trasfer
+                Trasfer <span class="badge bg-secondary">New</span>
               </a>
             </li>}
           </ul>

@@ -3,7 +3,9 @@ import { useFormik } from "formik";
 import auth from "../firebase/useAuth";
 import {
   createUserWithEmailAndPassword,
-  onAuthStateChanged,signInWithPopup, GoogleAuthProvider
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from "firebase/auth";
 
 const CreateAccountForm = ({ setShow }) => {
@@ -27,6 +29,11 @@ const CreateAccountForm = ({ setShow }) => {
       });
   };
 
+  function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log("test");
@@ -49,7 +56,7 @@ const CreateAccountForm = ({ setShow }) => {
     const url = `/account/create/${name}/${email}/${password}`;
     (async () => {
       let res = await fetch(url);
-      let data = await res.json();
+      let data = await res.text();
       console.log("Mi Data: ", data);
     })();
 
@@ -80,6 +87,7 @@ const CreateAccountForm = ({ setShow }) => {
       });
   };
 
+  const [submit, setSubmit] = useState(false);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -92,9 +100,12 @@ const CreateAccountForm = ({ setShow }) => {
     },
     validate: (values) => {
       let errors = {};
-      if (!values.name) errors.name = "Please enter user name";
+      //if (!values.name) errors.name = "Please enter user name";
       if (!values.email) errors.email = "Your email is require";
       if (!values.password) errors.password = "You must enter a valid password";
+      if(!validateEmail(values.email)) errors.email = "Not valida email format";
+      (Object.keys(errors).length===0) ? setSubmit(true) : setSubmit(false);
+    
       return errors;
     },
   });
@@ -115,14 +126,19 @@ const CreateAccountForm = ({ setShow }) => {
           <div style={{ color: "red" }}>{formik.errors.name}</div>
         ) : null}
         Email adress
-        <input
-          type="text"
-          name="email"
-          className="form-control m-1"
-          placeholder="Enter email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-        />
+        <div className="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">
+            @
+          </span>
+          <input
+            type="text"
+            name="email"
+            className={`form-control m-1 aria-label=${"Username"} aria-describedby='${"basic-addon1"}`}
+            placeholder="Enter email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+          />
+        </div>
         {formik.errors.email ? (
           <div style={{ color: "red" }}>{formik.errors.email}</div>
         ) : null}
@@ -138,11 +154,11 @@ const CreateAccountForm = ({ setShow }) => {
         {formik.errors.password ? (
           <div style={{ color: "red" }}>{formik.errors.password} </div>
         ) : null}
-        <button type="submit" className="btn btn-light m-2">
+        {submit && <button type="submit" className="btn btn-light m-2">
           Create Account
-        </button>
+        </button>}
         <div>Or</div>
-        <button onClick={signInGoogle}>Sing in With Google</button>
+        <button onClick={signInGoogle} className="btn btn-outline-success">Sing in With Google<span class="badge bg-secondary">New</span></button>
       </form>
     </div>
   );
